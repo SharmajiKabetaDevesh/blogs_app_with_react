@@ -6,7 +6,7 @@ import Input from '../Input/Input'
 import { useDispatch } from 'react-redux'
 import authService from '../../appwrite/auth'
 import {useForm} from 'react-hook-form'
-const SignUp = () => {
+export const SignUp = () => {
   const navigate=useNavigate();
   const dispatch=useDispatch();
   const [error,setError]=useState("");
@@ -87,4 +87,3 @@ const SignUp = () => {
   )
 }
 
-export default SignUp

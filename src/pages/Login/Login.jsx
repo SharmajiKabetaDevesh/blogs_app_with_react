@@ -1,4 +1,4 @@
-import {Login as LoginComponent }from "../../components/Login/Login";
+import {Login as LoginComponent } from "../../components/Login/Login.jsx"
 import React from 'react'
 
 const Login = () => {

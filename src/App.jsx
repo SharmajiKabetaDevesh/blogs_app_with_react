@@ -1,53 +1,38 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
-import Login from "./components/Login/Login"
-import Home from './components/Home/Home'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import SignUp from './components/SignUp/SignUp'
-import Layout from './components/Layout/Layout'
-import PostForm from './components/PostForm/PostForm'
+import authService from './appwrite/auth';
+import { Outlet } from 'react-router-dom';
+import {login,logout} from "./feature/authSlice"
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
 const App = () => {
-   const routes=createBrowserRouter([
-    { path:"/",element:<Layout/>,children:[
-      { path:"signup",element:<SignUp/>},
-      { path:"home",element:<Home/>},
-      { path:"login",element:<Login/>},
-      {path:"postform",element:<PostForm/>}
-  
-    ]},
 
-   ])
   const [loading,setLoading]=useState(true);
-  const user=useSelector((state=>state.authSliceReducer.status));
- 
-  console.log(user);
+
   const dispatch=useDispatch();
-  // useEffect(() => {
-  //   authService.getCurrentUser().then((data)=>{
-  //     console.log(data);
-  //     if(data){
-  //       dispatch(login(data));
-  //        navigate("/home")
-  //     }else{
-  //       dispatch(logout());
-  //     }
-  //     setLoading(false);
-  //   }).catch((error)=>{
-  //     console.log(error);
-  //   })
-   
-  // }, [])
+  useEffect(()=>{
+        authService.getCurrentUser().then((userData)=>{
+          if(userData){
+            dispatch(login({userData}))
+          }else{
+            dispatch(logout())
+          }
+        })
+        .finally(()=> setLoading(false))
+  },[])
+ 
+return !loading ? (
+  <div className='min-h-screen flex flex-wrap content-between bg-gray-400'>
+    <div className='w-full block'>
+      <Header />
+      <main>
+       <Outlet />
+      </main>
+      <Footer />
+    </div>
+  </div>
+) : null
   
-
-  return(
-    <RouterProvider router={routes}>
-
-    
-
-    </RouterProvider>
-   
-  )
 }
 
 export default App

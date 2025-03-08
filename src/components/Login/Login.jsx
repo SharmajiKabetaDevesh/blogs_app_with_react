@@ -8,7 +8,7 @@ import Input from '../Input/Input';
 import { useForm } from 'react-hook-form';
 
 
-const Login = () => {
+export const Login = () => {
   const navigate=useNavigate();
   const dispatch=useDispatch();
   const {register,handleSubmit}=useForm();
@@ -22,9 +22,7 @@ const Login = () => {
           const userData=await authService.getCurrentUser();
           if(userData){
             dispatch(storeLogin(userData))
-            navigate("/home")
-          }else{
-
+            navigate("/")
           }
          }
     }catch(error){
@@ -87,4 +85,3 @@ const Login = () => {
   )
 }
 
-export default Login

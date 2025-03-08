@@ -3,11 +3,11 @@ import RTE from '../RTE/RTE'
 import { useForm } from 'react-hook-form'
 import Button from "../Button/Button"
 import Input from "../Input/Input"
-import LogoutBtn from "../Header/LogoutBtn"
 import Select from "../Select/Select"
 import dbService from "../../appwrite/dbservice"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+
 const PostForm = ({post}) => {
     const {register,handleSubmit,watch,setValue,getValues,control}=useForm({
         defaultValues:{
@@ -19,18 +19,22 @@ const PostForm = ({post}) => {
     });
     const navigate=useNavigate();
     const userData=useSelector((state)=>state.authSliceReducer.userData)
+    console.log("userData:",userData);
+    console.log("userDataId:", userData?.userData?.$id);
+
 
     const submit=async(data)=>{
-        console.log(data);
+        console.log("data:",data);
         if(post){
-            const fileurl=data.image?.[0]?dbService.uploadFile(data.image[0]) :null;
+            console.log("Updating Data::EditPost:", { ...data, userId: userData.$id });
+            const fileurl=data.image?.[0]? await dbService.uploadFile(data.image[0]) :null;
             if(fileurl){
-                dbService.deleteFile(post.image)
+                dbService.deleteFile(post.imageurl)
             }
             const dbpost=await dbService.updatePost(
                 post.$id,{
                     ...data,
-                    featuredImage:(fileurl?fileurl.$id : undefined)
+                    image:(fileurl?fileurl.$id : undefined)
                     
                 }
                 
@@ -39,21 +43,17 @@ const PostForm = ({post}) => {
                 navigate(`/post/${dbpost.$id}`)
             }
         }else{
-            const fileurl=data.image?.[0]?dbService.uploadFile(data.image[0]) :null;
-            console.log(fileurl);
-            if(fileurl){
-                const fileid=fileurl.$id
-                data.featuredImage=fileid
-                console.log(data.featuredImageF)
+            console.log("Submitting Data:", { ...data, userId: userData.$id });
+
                 const dbPost=await dbService.createPost({
                     ...data,
-                    userId:userData.$id
+                    userId:userData?.userData?.$id
                 })
                 if(dbPost){
                     navigate(`/post/${dbPost.$id}`)
                 }
             }
-        }
+        
     }
 
     const slugTransform=useCallback((value)=>{
@@ -104,7 +104,7 @@ const PostForm = ({post}) => {
      />
      {post && <div className='w-full mb-4'>
           <img
-          src={dbService.filePreview(post.featuredImage)}
+          src={dbService.filePreview(post.imageurl)}
           alt={post.title}
           className="rounded-lg"
           />

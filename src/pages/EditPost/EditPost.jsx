@@ -1,23 +1,24 @@
 import React,{useState,useEffect} from 'react'
-import {Container} from "../../components/Container/Container"
+import Container from "../../components/Container/Container"
 import dbService from '../../appwrite/dbservice'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import PostForm from "../../components/PostForm/PostForm"
 const EditPost = () => {
-    const {post,setPost}=useState(null)
+    const [post,setPost]=useState(null)
     const {slug}=useParams()
+    console.log("EditPost :: slug :",slug)
     const navigate=useNavigate()
 
     useEffect(()=>{
        if(slug){
-         dbService.getPost(slug).then((post)=>{
-           if(post){
-            setPost=(post)
+         dbService.getPost({slug}).then((data)=>{
+           if(data){
+            setPost(data)
            }
         })
        }else{
-        navigate("/home")
+        navigate("/")
        }
     },[slug,navigate])
   return post?(
@@ -26,7 +27,7 @@ const EditPost = () => {
             <PostForm post={post}/>
         </Container>
     </div>
-  )
+  ):null
 }
 
 export default EditPost

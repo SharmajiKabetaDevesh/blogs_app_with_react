@@ -4,22 +4,15 @@ import authService from '../../appwrite/auth'
 import logout from '../../feature/authSlice'
 import Container from '../Container/Container'
 import LogoutBtn from './LogoutBtn'
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { Link ,useNavigate} from 'react-router-dom'
+
 const Header = () => {
     const dispatch=useDispatch();
     const navigate=useNavigate();
     const authStatus=useSelector((state)=>state.authSliceReducer.status)
     
     console.log("Logged in status "+authStatus)
-    const handleLogout=()=>{
-        console.log("Yes")
-           authService.logout().then(()=>{
-             dispatch(logout());
-              console.log("Logged out successfully");
-           })
-           .catch((error)=>{console.log(error)})
-     }
+   
 
      const navItems=[
         {
@@ -42,10 +35,6 @@ const Header = () => {
             name: "Add Post",
             path: "/add-post",
             active:authStatus
-        },{
-            name: "Create a Post",
-            path:"/postform",
-            active:authStatus
         }
      ]
   return (
@@ -66,7 +55,7 @@ const Header = () => {
             </li>
              }else{null}
         })}
-        {authStatus && <li><LogoutBtn handleLogout={handleLogout}/></li> }
+        {authStatus && <li><LogoutBtn /></li> }
       </ul>
       
     </nav>
